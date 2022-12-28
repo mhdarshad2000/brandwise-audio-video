@@ -25,11 +25,11 @@ async function scrap() {
                         lg[i]['states'][j]['link'] = link
                         lg[i]['states'][j]['city'] = await detailsPage(link, $(city).text())
                     } else {
-                        // const link = $(city).children("a").attr("href").replace("..", baseUrl)
-                        // const result = await nextPage(link)
-                        // result.map((elem, index) => {
-                        //     lg[i]['states'][j + index] = elem
-                        // })
+                        const link = $(city).children("a").attr("href").replace("..", baseUrl)
+                        const result = await nextPage(link)
+                        result.map((elem, index) => {
+                            lg[i]['states'][j + index] = elem
+                        })
                     }
                 })
             })
