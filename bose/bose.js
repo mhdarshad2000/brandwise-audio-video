@@ -25,11 +25,11 @@ async function scrap() {
                         bose[i]['states'][j]['link'] = link
                         bose[i]['states'][j]['city'] = await detailsPage(link, $(city).text())
                     } else {
-                        //     const link = $(city).children("a").attr("href").replace("..", baseUrl)
-                        // const result = await nextPage(link)
-                        // result.map((elem, index) => {
-                        //     bose[i]['states'][j + index] = elem
-                        // })
+                            const link = $(city).children("a").attr("href").replace("..", baseUrl)
+                        const result = await nextPage(link)
+                        result.map((elem, index) => {
+                            bose[i]['states'][j + index] = elem
+                        })
                     }
                 })
             })
