@@ -49,22 +49,22 @@ async function detailsPage(cityUrl, brand) {
             const $ = cheerio.load(htmlString)
             const postDiv = $(".post")
 
-            let count =0
-            $(postDiv).children("p").each((i,serviceCenter)=>{
-                if($(serviceCenter).children("strong").length === 1&&
-                !$(serviceCenter).children("strong").text().includes("Casio Customer Service Representative")&&
-                !$(serviceCenter).children("strong").text().includes("Casio Support Products:")&&
-                !$(serviceCenter).children("strong").text().includes("Zip Code") ){
+            let count = 0
+            $(postDiv).children("p").each((i, serviceCenter) => {
+                if ($(serviceCenter).children("strong").length === 1 &&
+                    !$(serviceCenter).children("strong").text().includes("Casio Customer Service Representative") &&
+                    !$(serviceCenter).children("strong").text().includes("Casio Support Products:") &&
+                    !$(serviceCenter).children("strong").text().includes("Zip Code")) {
                     arr[count] = {}
-                    const serviceCenterName= $(serviceCenter).children("strong").text()
-                    arr[count]["serviceCenter"] =serviceCenterName .replaceAll("\n","").trim()
+                    const serviceCenterName = $(serviceCenter).children("strong").text()
+                    arr[count]["serviceCenter"] = serviceCenterName.replaceAll("\n", "").trim()
 
-                    const address = $(serviceCenter).text().replace(serviceCenterName,"")
-                    arr[count]["address"] = address?.split(" Phone:")[0].replaceAll("\n","  ").replaceAll("\t","").trim()
+                    const address = $(serviceCenter).text().replace(serviceCenterName, "")
+                    arr[count]["address"] = address?.split(" Phone:")[0].replaceAll("\n", "  ").replaceAll("\t", "").trim()
                     arr[count]["phone"] = address?.split(" Phone:")[1]?.split("\n")[0]?.trim()
                     arr[count]["fax"] = address?.split(" Fax:")[1]?.split("\n")[0]?.trim()
 
-                    count ++
+                    count++
                 }
             })
 
