@@ -30,7 +30,7 @@ async function scrap() {
                 setTimeout(() => {
                     const brand = JSON.stringify(monster)
                     fs.writeFileSync("./monster/monster.json", brand)
-                }, 8000)
+                }, 20000)
             })
 
         } catch (error) {
@@ -60,20 +60,6 @@ async function detailsPage(cityUrl, brand) {
                         arr[i-1]["phone"] = $(serviceCenter).children("td:nth-child(3)").text().trim()
                     }
                 })
-            } else {
-                console.log(1)
-            //     $(postDiv).children("h2").each((i, serviceCenter) => {
-            //         if (!$(serviceCenter).text().includes("Hitachi Service Centers in")) {
-            //             arr[i - 1] = {}
-            //             arr[i - 1]["serviceCenter"] = $(serviceCenter).text().trim()
-            //             if (/[a-z]/gi.test($(serviceCenter).next().text())) {
-            //                 arr[i - 1]["address"] = $(serviceCenter).next().text().replaceAll("\t","").replaceAll("\n"," ").trim()
-            //                 arr[i - 1]["phone"] = $(serviceCenter).next().next().text().trim()
-            //             } else {
-            //                 arr[i - 1]["phone"] = $(serviceCenter).next().text().trim()
-            //             }
-            //         }
-            //     })
             }
 
             resolve(arr)
