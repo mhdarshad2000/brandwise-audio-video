@@ -29,7 +29,7 @@ async function scrap() {
                 })
                 setTimeout(() => {
                     const brand = JSON.stringify(rockford)
-                    fs.writeFileSync("./rockford/rockford.json", brand)
+                    fs.writeFileSync("./rockford/rockfordfosgate.json", brand)
                 }, 20000)
             })
 
