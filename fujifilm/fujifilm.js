@@ -49,23 +49,88 @@ async function detailsPage(cityUrl, brand) {
             const $ = cheerio.load(htmlString)
             const postDiv = $(".post")
 
-            const tableDiv = $(postDiv).find("table > tbody > tr")
-
-            if ($(tableDiv).text()) {
-                $(tableDiv).each((i, serviceCenter) => {
-                        arr[i] = {}
-                        const serviceCenterName = $(serviceCenter).children("td").children("h2")
-                        arr[i]["serviceCenter"] = serviceCenterName.text().replaceAll("\n","").replaceAll("\t").trim()
-                        if(/[a-z]/gi.test($(serviceCenterName).next().text())){
-                            arr[i]["address"] =$(serviceCenterName).next().text().replaceAll("\t","").replaceAll("  ","").replaceAll("\n"," ").trim()
-                            arr[i]["phone"] =$(serviceCenterName).next()?.next()?.text().trim()
-                        }else{
-                            arr[i]["phone"] =$(serviceCenterName).next().text().trim()
+            let count = 0
+            $(postDiv).children("p").each((i, serviceCenter) => {
+                if ((/\d/).test($(serviceCenter)) &&
+                    !$(serviceCenter).text().includes("Fujifilm Support Products") &&
+                    !$(serviceCenter).text().includes("Fujifilm Contact Customer Service") &&
+                    !$(serviceCenter).text().includes("Zip") &&
+                    $(serviceCenter).text().length
+                ) {
+                    const temp = $(serviceCenter).html().replace(/(\r\n|\n|\r|\t|&nbsp;)/gm, "").split("<br><br>")
+                    temp.map((elem, index) => {
+                        arr[count] = {}
+                        let phone = []
+                        let fax
+                        elem = elem.split("<br>")
+                        elem.map((element, j) => {
+                            if (j == 0) {
+                                arr[count]["serviceCenter"] = element.replaceAll("<strong>", "").replaceAll("</strong>", "").trim()
+                                elem[j] = ""
+                            } else if (element.includes("Map")) {
+                                elem[j] = ""
+                            } else if (element.includes("Fax")) {
+                                fax = element
+                                elem[j] = ""
+                            } else if (element.includes("Phone:")) {
+                                phone.push(element)
+                                elem[j] = ""
+                            } else if (!/[a-z]/gi.test(element)) {
+                                phone.push(element)
+                                elem[j] = ""
+                            } else if (element.includes(" or ")) {
+                                phone.push(element)
+                                elem[j] = ""
+                            } else if(element.includes("or ")){
+                                phone.push(element)
+                                elem[j] = ""
+                            } else if(element.includes("ext. 101")){
+                                phone.push(element)
+                                elem[j] = ""
+                            }
+                        })
+                        arr[count]["address"] = elem.join("").trim()
+                        arr[count]["phone"] = phone.join("").split("or")[0].replaceAll("Phone:", "")?.split("ext.")[0]?.trim()
+                        arr[count]["fax"] = fax?.replaceAll("Fax:", "").trim()
+                        count++
+                    })
+                }
+            })
+            if (!arr.length) {
+                let i = 0
+                const h3Div = $(postDiv).children("h3").html()
+                const temp = $(postDiv).html().split(h3Div)[1].split("<p>")[0].replace(/(\r\n|\n|\r|\t|&nbsp;)/gm, "").replace("</h3>","").trim().split("<br><br>")
+                temp.map((elem, index) => {
+                    arr[i] = {}
+                    let phone = []
+                    let fax
+                    elem = elem.split("<br>")
+                    elem.map((element, j) => {
+                        if (j == 0) {
+                            arr[i]["serviceCenter"] = element.replaceAll("<strong>", "").replaceAll("</strong>", "").trim()
+                            elem[j] = ""
+                        } else if (element.includes("Map")) {
+                            elem[j] = ""
+                        } else if (element.includes("Fax")) {
+                            fax = element
+                            elem[j] = ""
+                        } else if (element.includes("Phone:")) {
+                            phone.push(element)
+                            elem[j] = ""
+                        } else if (!/[a-z]/gi.test(element)) {
+                            phone.push(element)
+                            elem[j] = ""
+                        } else if (element.includes(" or ")) {
+                            phone.push(element)
+                            elem[j] = ""
                         }
-                        
+                    })
+                    arr[i]["address"] = elem.join("").trim()
+                    arr[i]["phone"] = phone.join("").split("or")[0].replaceAll("Phone:", "").trim()
+                    arr[i]["fax"] = fax?.replaceAll("Fax:", "").trim()
+                    i++
                 })
             }
-
 
             resolve(arr)
         } catch (error) {
